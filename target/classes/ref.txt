@@ -2,3 +2,8 @@ https://cwiki.apache.org/confluence/display/KAFKA/0.8.0+Producer+Example
 http://wpcertification.blogspot.in/2014/08/java-client-for-publishing-and.html
 http://khangaonkar.blogspot.in/2014/05/apache-kafka-java-tutorial.html
 http://kafka.apache.org/07/quickstart.html
+
+
+Batch Files for Windows platform:
+---------------------------------
+https://issues.apache.org/jira/browse/KAFKA-581

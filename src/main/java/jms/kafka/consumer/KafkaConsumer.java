@@ -14,7 +14,6 @@ import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.javaapi.message.ByteBufferMessageSet;
 import kafka.message.MessageAndOffset;
 
-
 public class KafkaConsumer extends  Thread {
 	final static String clientId = "SimpleConsumerDemoClient";
 	final static String TOPIC = "pythontest";
@@ -43,7 +42,6 @@ public class KafkaConsumer extends  Thread {
 		ConsumerIterator<byte[], byte[]> it = stream.iterator();
 		while(it.hasNext())
 			System.out.println(new String(it.next().message()));
-
 	}
 
 	private static void printMessages(ByteBufferMessageSet messageSet) throws UnsupportedEncodingException {
