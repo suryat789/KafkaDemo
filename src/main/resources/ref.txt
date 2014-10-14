@@ -7,3 +7,10 @@ http://kafka.apache.org/07/quickstart.html
 Batch Files for Windows platform:
 ---------------------------------
 https://issues.apache.org/jira/browse/KAFKA-581
+
+
+https://github.com/sathya21/kafka-storm-implementation/blob/master/pom.xml
+https://github.com/TheHydroImpulse/storm-kafka-starter
+http://sathyatechblog.wordpress.com/
+http://www.slideshare.net/gschmutz/kafka-andstromeventprocessinginrealtime?next_slideshow=1
+http://www.slideshare.net/ransilberman/live-person-case-study-real-time-data-streaming-using-kafka-storm
