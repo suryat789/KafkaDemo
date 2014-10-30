@@ -1,6 +1,4 @@
 package jms.kafka.consumer;
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,45 +9,44 @@ import kafka.consumer.ConsumerConfig;
 import kafka.consumer.ConsumerIterator;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
-import kafka.javaapi.message.ByteBufferMessageSet;
-import kafka.message.MessageAndOffset;
 
-public class KafkaConsumer extends  Thread {
-	final static String clientId = "SimpleConsumerDemoClient";
-	final static String TOPIC = "pythontest";
-	ConsumerConnector consumerConnector;
+public class KafkaConsumer {
+	private final ConsumerConnector consumer;
+	private static final String TOPIC = "TestKafkaTopic";
 
-
-	public static void main(String[] argv) throws UnsupportedEncodingException {
-		KafkaConsumer KafkaConsumer = new KafkaConsumer();
-		KafkaConsumer.start();
+	public KafkaConsumer(String zookeeper, String groupId) {
+		Properties props = new Properties();
+		props.put("zookeeper.connect", zookeeper);
+		props.put("group.id", groupId);
+		props.put("zookeeper.session.timeout.ms", "500");
+		props.put("zookeeper.sync.time.ms", "250");
+		props.put("auto.commit.interval.ms", "1000");
+		consumer = Consumer.createJavaConsumerConnector(new ConsumerConfig(props));
 	}
 
-	public KafkaConsumer(){
-		Properties properties = new Properties();
-		properties.put("zookeeper.connect","localhost:2181");
-		properties.put("group.id","test-group");
-		ConsumerConfig consumerConfig = new ConsumerConfig(properties);
-		consumerConnector = Consumer.createJavaConsumerConnector(consumerConfig);
-	}
-
-	@Override
-	public void run() {
-		Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
-		topicCountMap.put(TOPIC, new Integer(1));
-		Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = consumerConnector.createMessageStreams(topicCountMap);
-		KafkaStream<byte[], byte[]> stream =  consumerMap.get(TOPIC).get(0);
-		ConsumerIterator<byte[], byte[]> it = stream.iterator();
-		while(it.hasNext())
-			System.out.println(new String(it.next().message()));
-	}
-
-	private static void printMessages(ByteBufferMessageSet messageSet) throws UnsupportedEncodingException {
-		for(MessageAndOffset messageAndOffset: messageSet) {
-			ByteBuffer payload = messageAndOffset.message().payload();
-			byte[] bytes = new byte[payload.limit()];
-			payload.get(bytes);
-			System.out.println(new String(bytes, "UTF-8"));
+	public void testConsumer() {
+		Map<String, Integer> topicCount = new HashMap<String, Integer>();
+		
+		// Define single thread for topic
+		topicCount.put(TOPIC, new Integer(1));
+		Map<String, List<KafkaStream<byte[], byte[]>>> consumerStreams = consumer.createMessageStreams(topicCount);
+		List<KafkaStream<byte[], byte[]>> streams = consumerStreams.get(TOPIC);
+		
+		for (final KafkaStream stream : streams) {
+			ConsumerIterator<byte[], byte[]> consumerIte = stream.iterator();
+			
+			while (consumerIte.hasNext())
+				System.out.println("Message from Single Topic :: " + new String(consumerIte.next().message()));
 		}
+		
+		if (consumer != null){
+			consumer.shutdown();
+		}
+	}
+
+	public static void main(String[] args) {
+		
+		KafkaConsumer consumer = new KafkaConsumer("10.74.230.142:2181", "testgroup");
+		consumer.testConsumer();
 	}
 }

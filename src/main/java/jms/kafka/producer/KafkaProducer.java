@@ -1,25 +1,31 @@
 package jms.kafka.producer;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
 public class KafkaProducer {
-	final static String TOPIC = "javatest";
+	private static final String TOPIC = "TestKafkaTopic";
+	private static final String MESSAGE	= "Hello World On " + new Date().toString(); 
+	private static Producer<Integer, String> producer;
+	private final Properties props = new Properties();
 
+	public KafkaProducer()
+	{
+		// props.put("broker.list", "10.74.230.142:9092");
+		props.put("metadata.broker.list", "10.74.230.142:9092");
+		props.put("serializer.class", "kafka.serializer.StringEncoder");
+		props.put("request.required.acks", "1");
+		producer = new Producer<Integer, String>(new ProducerConfig(props));
+	}
 
-	public static void main(String[] argv){
-		Properties properties = new Properties();
-		properties.put("metadata.broker.list","localhost:9092");
-		properties.put("serializer.class","kafka.serializer.StringEncoder");
-		ProducerConfig producerConfig = new ProducerConfig(properties);
-		kafka.javaapi.producer.Producer<String,String> producer = new kafka.javaapi.producer.Producer<String, String>(producerConfig);
-		SimpleDateFormat sdf = new SimpleDateFormat();
-		KeyedMessage<String, String> message =new KeyedMessage<String, String>(TOPIC,"Test message from java program " + sdf.format(new Date()));
-		producer.send(message);
+	public static void main(String[] args) {
+		KafkaProducer kp = new KafkaProducer();
+		KeyedMessage<Integer, String> data = new KeyedMessage<Integer, String>(TOPIC, MESSAGE);
+		producer.send(data);
 		producer.close();
 	}
 }
